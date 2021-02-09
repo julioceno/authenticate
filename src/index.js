@@ -9,14 +9,11 @@ function auth(req, res, next) {
     let token = req.headers['authorization']
     token = token.split(' ')[1];
 
-    console.log(token)
-
     jwt.verify(token, "access", (err, user) => {
         if (!err) {
             req.user = user 
             next()
         } else {
-            console.log("cri cri")
             return res.status(401).json({message: "user not authenticated"})
         }
     })
@@ -47,7 +44,6 @@ app.post('/login', (req, res) => {
 
 app.post('/refresh', (req, res) => {
     const refreshToken = req.body.token;
-    console.log(refreshToken)
 
     if (!refreshToken || !blackList.includes(refreshToken)) {
         return res.json({ message: "User not authenticated" })
@@ -55,7 +51,6 @@ app.post('/refresh', (req, res) => {
 
     jwt.verify(refreshToken, "refresh", (err, user) => {
         if (!err) {
-    console.log("o3")
 
             const accessToken = jwt.sign({ username: user.name }, "access", { expiresIn: "30s" })
             return res.json({ sucess: accessToken })
